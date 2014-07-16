@@ -1,0 +1,9 @@
+{
+  "name": "qr-scanner",
+  "description": "A Reactive Bootstrap Theme Editor for Meteor",
+  "homepage": "https://github.com/hitchcott/meteor-jsqrcode",
+  "author": "Lazar Laszlo <http://lazarsoft.info>, packaged for Meteor by Chris Hitchcott <hitchcott@gmail.com>",
+  "version": "0.1.0",
+  "git": "https://github.com/hitchcott/meteor-jsqrcode.git",
+  "packages": {}
+}
