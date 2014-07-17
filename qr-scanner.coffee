@@ -2,14 +2,21 @@ qrReactiveDict = new ReactiveDict
 
 @qrScanner =
   message: -> qrReactiveDict.get 'message'
-  fail: null
-  done: null
+
+  on : (eventName, callback) ->
+    @[eventName] = callback
+
+  off : (eventName) ->
+    delete @[eventName]
+
 
 $canvas = null
 $video = null
 ctx = null
+showingCanvas = false
 
-Template.qrScanner.rendered = ->
+Template._qrScanner.rendered = ->
+  showingCanvas = true
   @data?= {}
   w = @data.w?= 320
   h = @data.h?= 240
@@ -17,8 +24,10 @@ Template.qrScanner.rendered = ->
   $video = $('#qr-scanner-video')
   load w, h
 
-Template.qrScanner.destroyed = ->
+Template._qrScanner.destroyed = ->
+  showingCanvas = false
   qrReactiveDict.set 'message', null
+  qrScanner.off 'scan'
 
 isCanvasSupported = ->
   elem = document.createElement("canvas")
@@ -29,8 +38,8 @@ load = (w,h) ->
     initDom w, h
     initWebcam w, h
   else
-    err = 'Sorry, your browser doesn\'t support Canvas'
-    if qrScanner.fail then qrScanner.fail err else console.log err
+    err = 'Your browser does not support canvas'
+    console.log err
 
 initDom = (w, h) ->
   $canvas.width(w).attr('width', w)
@@ -59,16 +68,20 @@ initWebcam = (w, h) ->
         $video[0].src = stream
       Meteor.setTimeout captureToCanvas, 500
     , (err) ->
-      if qrScanner.fail then qrScanner.fail err else console.log err
+      console.log err
   else
-    err = 'Your borwser doesnt support getUserMedia'
-    if qrScanner.fail then qrScanner.fail err else console.log err
+    console.log 'Your borwser doesnt support getUserMedia'
 
 captureToCanvas = ->
   ctx.drawImage $video[0], 0, 0
   try
     message = qrcode.decode()
     qrReactiveDict.set 'message', message
-    if qrScanner.done then qrScanner.done message else console.log message
-  Meteor.setTimeout captureToCanvas, 500
+    if qrScanner.scan then qrScanner.scan null, message
+  catch
+    err = "The QR code isnt visible or couldn't be read"
+    if qrScanner.scan then qrScanner.scan err, null
+
+  if showingCanvas
+    Meteor.setTimeout captureToCanvas, 500
 
