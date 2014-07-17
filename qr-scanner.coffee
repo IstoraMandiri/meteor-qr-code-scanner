@@ -1,8 +1,9 @@
 qrReactiveDict = new ReactiveDict
 
 @qrScanner =
-  qrcode : qrcode # the lib
   message: -> qrReactiveDict.get 'message'
+  fail: null
+  done: null
 
 $canvas = null
 $video = null
@@ -16,18 +17,17 @@ Template.qrScanner.rendered = ->
   $video = $('#qr-scanner-video')
   load w, h
 
-Template.qrScanner.message = -> qrScanner.message()
-
 isCanvasSupported = ->
   elem = document.createElement("canvas")
   !!(elem.getContext and elem.getContext("2d"))
 
 load = (w,h) ->
-  if isCanvasSupported() and window.File and window.FileReader
+  if isCanvasSupported()
     initDom w, h
     initWebcam w, h
   else
-    console.log 'Sorry, your browser doesnt support QR Code Scanner'
+    err = 'Sorry, your browser doesn\'t support Canvas'
+    if qrScanner.fail then qrScanner.fail err else console.log err
 
 initDom = (w, h) ->
   $canvas.width(w).attr('width', w)
