@@ -1,8 +1,13 @@
 Package.describe({
-  summary: 'A QR Code Scanner (jsqrcode)'
+  summary: 'A QR Code Scanner (using jsqrcode)'
 });
 
 Package.on_use(function (api) {
+  api.use([
+    'coffeescript',
+    'templating',
+    'reactive-dict'
+  ],'client')
 
   api.add_files([
     'lib/jsqrcode/grid.js',
@@ -21,9 +26,10 @@ Package.on_use(function (api) {
     'lib/jsqrcode/qrcode.js',
     'lib/jsqrcode/findpat.js',
     'lib/jsqrcode/alignpat.js',
-    'lib/jsqrcode/databr.js'
+    'lib/jsqrcode/databr.js',
+    'qr-scanner.css',
+    'qr-scanner.html',
+    'qr-scanner.coffee'
   ], 'client')
-
-  api.export("qrcode");
 
 })
