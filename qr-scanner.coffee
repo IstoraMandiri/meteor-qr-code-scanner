@@ -17,6 +17,9 @@ Template.qrScanner.rendered = ->
   $video = $('#qr-scanner-video')
   load w, h
 
+Template.qrScanner.destroyed = ->
+  qrReactiveDict.set 'message', null
+
 isCanvasSupported = ->
   elem = document.createElement("canvas")
   !!(elem.getContext and elem.getContext("2d"))
