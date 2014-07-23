@@ -9,10 +9,16 @@ qrReactiveDict = new ReactiveDict
   off : (eventName) ->
     delete @[eventName]
 
+  imageData : -> ctx.getImageData(0, 0, w, h)
+
+  imageDataURL: -> $canvas[0].toDataURL("image/jpeg")
 
 $canvas = null
 $video = null
 ctx = null
+w = null
+h = null
+
 showingCanvas = false
 
 Template._qrScanner.rendered = ->
@@ -22,7 +28,7 @@ Template._qrScanner.rendered = ->
   h = @data.h?= 240
   $canvas = $('#qr-canvas')
   $video = $('#qr-scanner-video')
-  load w, h
+  load()
 
 Template._qrScanner.destroyed = ->
   showingCanvas = false
@@ -33,22 +39,22 @@ isCanvasSupported = ->
   elem = document.createElement("canvas")
   !!(elem.getContext and elem.getContext("2d"))
 
-load = (w,h) ->
+load = ->
   if isCanvasSupported()
-    initDom w, h
-    initWebcam w, h
+    initDom()
+    initWebcam()
   else
     err = 'Your browser does not support canvas'
     console.log err
 
-initDom = (w, h) ->
+initDom = ->
   $canvas.width(w).attr('width', w)
   $canvas.height(h).attr('height', h)
   ctx = $canvas[0].getContext("2d")
   ctx.clearRect 0, 0, w, h
   return
 
-initWebcam = (w, h) ->
+initWebcam = ->
   navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia
   if navigator.getUserMedia
     navigator.getUserMedia

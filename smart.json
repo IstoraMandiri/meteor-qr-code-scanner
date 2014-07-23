@@ -3,7 +3,7 @@
   "description": "A no-nonsense QR Code Scanner (using jsqrcode)",
   "homepage": "https://github.com/hitchcott/meteor-qr-code-scanner",
   "author": "Chris Hitchcott <hitchcott@gmail.com>, Lazar Laszlo <http://lazarsoft.info>",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "git": "https://github.com/hitchcott/meteor-qr-code-scanner.git",
   "packages": {}
 }

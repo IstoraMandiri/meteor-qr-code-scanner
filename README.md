@@ -33,7 +33,15 @@ You can also bind a callback to the `scan` event, which will be fired each time 
 qrScanner.on 'scan', (err, message) ->
   alert(message) if message?
 ```
-You can then do as you please with the message.
+
+## Image Data
+
+At any time you can access image data from the scanner using the following:
+
+```
+  qrScanner.imageData()     # ctx.getImageData()
+  qrScanner.imageDataURL()  # canvas.toDataURL("image/jpeg")
+```
 
 ## Video Quality
 
