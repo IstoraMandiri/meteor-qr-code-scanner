@@ -13,11 +13,18 @@ qrReactiveDict = new ReactiveDict
 
   imageDataURL: -> $canvas[0].toDataURL("image/jpeg")
 
+  isStarted: -> return isStarted()
+
+  stopCapture: -> stopCapture()
+
 $canvas = null
 $video = null
 ctx = null
 w = null
 h = null
+localMediaStream = null
+localMediaTimeout = null
+started = false
 
 showingCanvas = false
 
@@ -31,6 +38,15 @@ Template._qrScanner.rendered = ->
   load()
 
 Template._qrScanner.destroyed = ->
+  stopCapture()
+
+stopCapture = ->
+  if localMediaStream
+    try
+      localMediaStream.stop()
+      localMediaStream.active = false
+  if localMediaTimeout
+    Meteor.clearTimeout localMediaTimeout
   showingCanvas = false
   qrReactiveDict.set 'message', null
   qrScanner.off 'scan'
@@ -56,6 +72,7 @@ initDom = ->
 
 initWebcam = ->
   navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia
+  started = true
   if navigator.getUserMedia
     navigator.getUserMedia
       video:
@@ -66,13 +83,16 @@ initWebcam = ->
       audio:false
     , (stream) ->
       if navigator.webkitGetUserMedia
-        $video[0].src = window.webkitURL.createObjectURL(stream)
+        $video[0].src = window.URL.createObjectURL(stream)
       else if navigator.mozGetUserMedia
         $video[0].mozSrcObject = stream
         $video[0].play()
       else
         $video[0].src = stream
-      Meteor.setTimeout captureToCanvas, 500
+      localMediaStream = stream
+      if localMediaTimeout
+        Meteor.clearTimeout localMediaTimeout
+      localMediaTimeout = Meteor.setTimeout captureToCanvas, 500
     , (err) ->
       console.log err
   else
@@ -91,3 +111,5 @@ captureToCanvas = ->
   if showingCanvas
     Meteor.setTimeout captureToCanvas, 500
 
+isStarted = ->
+  return started
