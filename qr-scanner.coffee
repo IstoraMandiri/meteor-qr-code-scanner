@@ -3,34 +3,53 @@ qrReactiveDict = new ReactiveDict
 @qrScanner =
   message: -> qrReactiveDict.get 'message'
 
-  on : (eventName, callback) ->
+  on: (eventName, callback) ->
     @[eventName] = callback
 
-  off : (eventName) ->
+  off: (eventName) ->
     delete @[eventName]
 
-  imageData : -> ctx.getImageData(0, 0, w, h)
+  imageData: -> ctx.getImageData(0, 0, w, h)
 
   imageDataURL: -> $canvas[0].toDataURL("image/jpeg")
+
+  isStarted: -> started
+
+  isSupported: -> support
+
+  stopCapture: -> stopCapture()
 
 $canvas = null
 $video = null
 ctx = null
 w = null
 h = null
+localMediaStream = null
+localMediaInterval = null
+started = false
+support = false
 
 showingCanvas = false
 
 Template._qrScanner.rendered = ->
   showingCanvas = true
   @data?= {}
-  w = @data.w?= 320
-  h = @data.h?= 240
+  w = @data.w?= 640
+  h = @data.h?= 480
   $canvas = $('#qr-canvas')
-  $video = $('#qr-scanner-video')
+  $video = $('#qr-scanner-video')[0]
   load()
 
 Template._qrScanner.destroyed = ->
+  stopCapture()
+
+stopCapture = ->
+  if localMediaStream
+    try
+      localMediaStream.stop()
+      localMediaStream.active = false
+  if localMediaInterval
+    Meteor.clearInterval localMediaInterval
   showingCanvas = false
   qrReactiveDict.set 'message', null
   qrScanner.off 'scan'
@@ -56,30 +75,42 @@ initDom = ->
 
 initWebcam = ->
   navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia
+  started = true
   if navigator.getUserMedia
-    navigator.getUserMedia
-      video:
-        mandatory:
-          maxWidth:w
-          maxHeight:h
-        optional:[]
-      audio:false
-    , (stream) ->
-      if navigator.webkitGetUserMedia
-        $video[0].src = window.URL.createObjectURL(stream)
-      else if navigator.mozGetUserMedia
-        $video[0].mozSrcObject = stream
-        $video[0].play()
-      else
-        $video[0].src = stream
-      Meteor.setTimeout captureToCanvas, 500
-    , (err) ->
-      console.log err
+    optional_source = []
+    MediaStreamTrack.getSources (sourceInfos) ->
+      for i in [0..sourceInfos.length]
+        sourceInfo = sourceInfos[i]
+        if sourceInfo.kind == 'video' && (sourceInfo.facing == '' || sourceInfo.facing == 'environment')
+          optional_source = [sourceId: sourceInfo.id]
+          break
+
+      navigator.getUserMedia
+        video:
+          mandatory:
+            maxWidth: w
+            maxHeight: h
+          optional: optional_source
+        audio: false
+      , (stream) ->
+        if navigator.webkitGetUserMedia
+          $video.src = window.URL.createObjectURL(stream)
+        else if navigator.mozGetUserMedia
+          $video.mozSrcObject = stream
+          $video.play()
+        else
+          $video.src = stream
+        localMediaStream = stream
+        if !localMediaInterval
+          localMediaInterval = Meteor.setInterval captureToCanvas, 500
+      , (err) ->
+        console.log err
   else
+    support = false
     console.log 'Your borwser doesnt support getUserMedia'
 
 captureToCanvas = ->
-  ctx.drawImage $video[0], 0, 0
+  ctx.drawImage $video, 0, 0
   try
     message = qrcode.decode()
     qrReactiveDict.set 'message', message
@@ -87,7 +118,3 @@ captureToCanvas = ->
   catch
     err = "The QR code isnt visible or couldn't be read"
     if qrScanner.scan then qrScanner.scan err, null
-
-  if showingCanvas
-    Meteor.setTimeout captureToCanvas, 500
-

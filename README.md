@@ -5,6 +5,8 @@ Meteor QR Code Scanner
 
 This package uses the [getUserMedia stream](http://caniuse.com/stream) API to record webcam or front-facing mobile cameras, constantly scanning frames to read and decode QR codes. The entire package is client-side only.
 
+By default, qr-scanner will use the 'environment facing' camera (the main camera for smartphones) and falls back to 'face facing'.
+
 qr-scanner is made possible by [jsqrcode](https://github.com/LazarSoft/jsqrcode).
 
 ## Quickstart
@@ -45,7 +47,7 @@ At any time you can access image data from the scanner using the following:
 
 ## Video Quality
 
-You can specify a [relatively](http://stackoverflow.com/a/15434766/2682159) specific video resolution if you want, but it can become a jumpy on mobile devices. More pixel data is needed to be analysed with higher resolutions.
+You can specify a [relatively](http://stackoverflow.com/a/15434766/2682159) specific video resolution if you want, but it can become a jumpy on mobile devices. More pixel data is needed to be analysed with higher resolutions. The default is 640 x 480.
 
 ```
 {{> qrScanner w=1024 h=768}}
@@ -53,9 +55,15 @@ You can specify a [relatively](http://stackoverflow.com/a/15434766/2682159) spec
 
 The default resolution is 320 x 240 px, which works smoothly and effectively on a Galaxy S4.
 
-## Todo
 
-* API for accessing scanned image data
+## Stop Caputure
+
+Use the following to stop capturing
+
+```
+qrScanner.stopCapture()
+```
+
 
 ## Credits / Licenses
 
