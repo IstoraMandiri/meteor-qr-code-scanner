@@ -66,7 +66,7 @@ initWebcam = ->
       audio:false
     , (stream) ->
       if navigator.webkitGetUserMedia
-        $video[0].src = window.webkitURL.createObjectURL(stream)
+        $video[0].src = window.URL.createObjectURL(stream)
       else if navigator.mozGetUserMedia
         $video[0].mozSrcObject = stream
         $video[0].play()
