@@ -11,10 +11,10 @@ qr-scanner is made possible by [jsqrcode](https://github.com/LazarSoft/jsqrcode)
 
 ## Quickstart
 
-Install with Meteorite.
+Install with Meteor.
 
 ```
-$ mrt add qr-scanner
+meteor add hitchcott:qr-scanner
 ```
 
 Add the video streaming template to your app.
