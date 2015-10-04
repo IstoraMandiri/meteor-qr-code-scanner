@@ -1,6 +1,12 @@
 #qr-canvas{
   display:none;
+  width:100%;
 }
+#qr-canvas.isCordova{
+  display:block;
+  background:grey;
+}
+
 
 #qr-scanner-video{
   width:100%;

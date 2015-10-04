@@ -28,12 +28,17 @@ Template._qrScanner.rendered = ->
   h = @data.h?= 240
   $canvas = $('#qr-canvas')
   $video = $('#qr-scanner-video')
-  load()
+  setTimeout ->
+    load()
+  , 1000
 
 Template._qrScanner.destroyed = ->
   showingCanvas = false
   qrReactiveDict.set 'message', null
   qrScanner.off 'scan'
+
+Template._qrScanner.helpers
+  isCordova : -> Meteor.isCordova
 
 isCanvasSupported = ->
   elem = document.createElement("canvas")
@@ -42,10 +47,16 @@ isCanvasSupported = ->
 load = ->
   if isCanvasSupported()
     initDom()
-    initWebcam()
+    unless Meteor.isCordova
+      initWebcam()
+    else
+      setTimeout ->
+        initCordovaWebcam()
+      , 1000
   else
     err = 'Your browser does not support canvas'
     console.log err
+
 
 initDom = ->
   $canvas.width(w).attr('width', w)
@@ -72,14 +83,24 @@ initWebcam = ->
         $video[0].play()
       else
         $video[0].src = stream
-      Meteor.setTimeout captureToCanvas, 500
+      Meteor.setTimeout captureFromCanvas, 500
     , (err) ->
       console.log err
   else
     console.log 'Your borwser doesnt support getUserMedia'
 
-captureToCanvas = ->
-  ctx.drawImage $video[0], 0, 0
+initCordovaWebcam = ->
+  plugin.CanvasCamera.initialize($canvas[0]);
+  # https://github.com/meteor/meteor/issues/3799
+  # plugin.CanvasCamera.capture = (data) ->
+  #   # TODO once the above issue is resolved, use FileURI instead
+  #   @_camImage.src = data
+  CanvasCamera.start()
+  Meteor.setTimeout captureFromCanvas, 2000
+
+captureFromCanvas = ->
+  unless Meteor.isCordova
+    ctx.drawImage $video[0], 0, 0
   try
     message = qrcode.decode()
     qrReactiveDict.set 'message', message
@@ -89,5 +110,5 @@ captureToCanvas = ->
     if qrScanner.scan then qrScanner.scan err, null
 
   if showingCanvas
-    Meteor.setTimeout captureToCanvas, 500
+    Meteor.setTimeout captureFromCanvas, 500
 
