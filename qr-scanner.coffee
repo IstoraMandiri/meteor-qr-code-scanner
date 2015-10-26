@@ -45,9 +45,7 @@ Template._qrScanner.destroyed = ->
 
 stopCapture = ->
   if localMediaStream
-    try
-      localMediaStream.stop()
-      localMediaStream.active = false
+    localMediaStream.getTracks()[0].stop()
   if localMediaInterval
     Meteor.clearInterval localMediaInterval
   showingCanvas = false
