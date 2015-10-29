@@ -1,13 +1,13 @@
 Package.describe({
   name:'hitchcott:qr-scanner',
-  version:'1.0.1',
+  version:'1.0.2',
   summary: 'A QR Code Scanner (using jsqrcode)',
   git: "https://github.com/hitchcott/meteor-qr-code-scanner.git"
 });
 
 Package.on_use(function (api) {
 
-  api.versionsFrom('METEOR@1.2.0.2')
+  api.versionsFrom('METEOR@0.9.0')
 
   api.use([
     'coffeescript',
