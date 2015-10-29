@@ -25,7 +25,7 @@ ejson@1.0.7
 es5-shim@4.1.13
 fastclick@1.0.7
 geojson-utils@1.0.4
-hitchcott:qr-scanner@1.0.0
+hitchcott:qr-scanner@1.0.1
 hot-code-push@1.0.0
 html-tools@1.0.5
 htmljs@1.0.5
