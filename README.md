@@ -23,7 +23,7 @@ Add the video streaming template to your app.
 {{> qrScanner}}
 ```
 
-You can access the latest succesfully decoded message through the reactive variable `message`.
+You can access the latest successfully decoded message through the reactive variable `message`.
 
 ```
 Template.myTmpl.qrCode = -> qrScanner.message()
@@ -47,7 +47,7 @@ At any time you can access image data from the scanner using the following:
 
 ## Video Quality
 
-You can specify a [relatively](http://stackoverflow.com/a/15434766/2682159) specific video resolution if you want, but it can become a jumpy on mobile devices. More pixel data is needed to be analysed with higher resolutions. The default is 640 x 480.
+You can specify a [relatively](http://stackoverflow.com/a/15434766/2682159) specific video resolution if you want, but it can become a jumpy on mobile devices. More pixel data is needed to be analyzed with higher resolutions. The default is 640 x 480.
 
 ```
 {{> qrScanner w=1024 h=768}}
@@ -56,7 +56,7 @@ You can specify a [relatively](http://stackoverflow.com/a/15434766/2682159) spec
 The default resolution is 320 x 240 px, which works smoothly and effectively on a Galaxy S4.
 
 
-## Stop Caputure
+## Stop Capture
 
 Use the following to stop capturing
 
