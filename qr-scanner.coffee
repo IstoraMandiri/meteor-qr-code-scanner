@@ -49,6 +49,7 @@ stopCapture = ->
       track.stop()
   if localMediaInterval
     Meteor.clearInterval localMediaInterval
+    localMediaInterval = null
   showingCanvas = false
   qrReactiveDict.set 'message', null
   qrScanner.off 'scan'
