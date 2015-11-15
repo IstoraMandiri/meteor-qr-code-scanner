@@ -78,10 +78,21 @@ initWebcam = ->
   started = true
   if navigator.getUserMedia
     optional_source = []
-    MediaStreamTrack.getSources (sourceInfos) ->
+
+    # backwards compatability
+    if MediaStreamTrack.getSources
+      MediaStreamTrack.getSources (sources) -> parseSources sources
+    else if navigator.mediaDevices.enumerateDevices
+      navigator.mediaDevices.enumerateDevices().then (sources) -> parseSources sources
+    else
+      support = false
+      console.log 'Cannot get mediaStream sources'
+
+    parseSources = (sourceInfos) ->
       for i in [0..sourceInfos.length]
         sourceInfo = sourceInfos[i]
-        if sourceInfo.kind == 'video' && (sourceInfo.facing == '' || sourceInfo.facing == 'environment')
+        if sourceInfo.kind == 'video' && (sourceInfo.facing == '' || sourceInfo.facing == 'environment')\
+        or sourceInfo.kind == 'videoinput' # for enumerateDevices
           optional_source = [sourceId: sourceInfo.id]
           break
 
