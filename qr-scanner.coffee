@@ -91,8 +91,8 @@ initWebcam = ->
     parseSources = (sourceInfos) ->
       for i in [0..sourceInfos.length]
         sourceInfo = sourceInfos[i]
-        if sourceInfo.kind == 'video' && (sourceInfo.facing == '' || sourceInfo.facing == 'environment')\
-        or sourceInfo.kind == 'videoinput' # for enumerateDevices
+        if sourceInfo && sourceInfo.kind == 'video' && (sourceInfo.facing == '' || sourceInfo.facing == 'environment')\
+        or sourceInfo && sourceInfo.kind == 'videoinput' # for enumerateDevices
           optional_source = [sourceId: sourceInfo.id]
           break
 
